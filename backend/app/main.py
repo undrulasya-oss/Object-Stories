@@ -12,7 +12,7 @@ logging.basicConfig(level=logging.INFO)
 app=FastAPI(title='Object Stories API',version='1.0.0',description='A relational museum of artifacts and their connections.')
 origins=[x.strip() for x in os.getenv('FRONTEND_ORIGINS','http://localhost:3000').split(',')]
 app.add_middleware(CORSMiddleware,allow_origins=origins,allow_credentials=True,allow_methods=['GET','POST','PATCH','DELETE'],allow_headers=['*'])
-def obj(a):return {'id':a.id,'name':a.name,'slug':a.slug,'short_description':a.short_description,'story':a.story,'historical_period':a.historical_period,'origin':a.origin,'materials':a.materials or [],'historical_significance':a.historical_significance,'image_url':a.image_url,'image_attribution':a.image_attribution,'source_url':a.source_url,'tags':a.tags or [],'is_published':a.is_published,'category':{'id':a.category.id,'name':a.category.name,'slug':a.category.slug}}
+def obj(a):return {'id':a.id,'name':a.name,'slug':a.slug,'short_description':a.short_description,'story':a.story,'historical_period':a.historical_period,'origin':a.origin,'materials':a.materials or [],'historical_significance':a.historical_significance,'image_url':a.image_url or 'https://object-stories-weld.vercel.app/artifacts/' + a.slug + ('.png' if a.slug in ('daguerreotype-portrait','morse-telegraph-key') else '.jpg'),'image_attribution':a.image_attribution,'source_url':a.source_url,'tags':a.tags or [],'is_published':a.is_published,'category':{'id':a.category.id,'name':a.category.name,'slug':a.category.slug}}
 def published(db):return db.query(Artifact).options(joinedload(Artifact.category)).filter(Artifact.is_published.is_(True))
 @app.get('/health')
 def health():return {'status':'ok'}
