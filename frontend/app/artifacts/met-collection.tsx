@@ -1,6 +1,6 @@
 'use client';
-import {FormEvent,useEffect,useRef,useState} from 'react';
-type MetItem={id:number;title:string;artist:string;date:string;culture:string;medium:string;department:string;image:string;url:string;credit:string;highlight:boolean};
+type MetItem={id:number;title:string;artist:string;date:string;culture:string;medium:string;department:string;image:string;url:string;credit:string;objectName:string;highlight:boolean};
+
 type Result={query:string;total:number;items:MetItem[];error?:string};
 export function MetCollection(){const [query,setQuery]=useState('mask'),[result,setResult]=useState<Result|null>(null),[loading,setLoading]=useState(true),[error,setError]=useState(''); const started=useRef(false);
  async function search(q:string){setLoading(true);setError('');try{const response=await fetch('/api/met?q='+encodeURIComponent(q),{cache:'no-store'});const data=await response.json() as Result;if(!response.ok)throw new Error(data.error||'The museum API is unavailable.');setResult(data)}catch(e){setError(e instanceof Error?e.message:'Could not reach the museum API.')}finally{setLoading(false)}}
