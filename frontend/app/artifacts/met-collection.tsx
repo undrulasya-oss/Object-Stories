@@ -1,4 +1,5 @@
 'use client';
+import {FormEvent,useEffect,useRef,useState} from 'react';
 type MetItem={id:number;title:string;artist:string;date:string;culture:string;medium:string;department:string;image:string;url:string;credit:string;objectName:string;highlight:boolean};
 
 type Result={query:string;total:number;items:MetItem[];error?:string};
