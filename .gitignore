@@ -1,0 +1,17 @@
+.env
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+node_modules/
+.next/
+dist/
+*.db
+*.sqlite3
+.pnpm-store/
+.python-packages/
+.tmp/
+test.txt
+/work/
+*.tsbuildinfo

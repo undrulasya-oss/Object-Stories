@@ -1,0 +1,6 @@
+'use client';
+import {useEffect,useState} from 'react';
+const KEY='object-stories-saved-v1';
+type Saved={slug:string;name:string;category:string;period:string;image:string|null};
+export function SaveButton({item}:{item:Saved}){const[saved,setSaved]=useState(false);useEffect(()=>{try{setSaved((JSON.parse(localStorage.getItem(KEY)||'[]') as Saved[]).some(x=>x.slug===item.slug))}catch{}},[item.slug]);function toggle(e:React.MouseEvent){e.preventDefault();e.stopPropagation();const list:Saved[]=JSON.parse(localStorage.getItem(KEY)||'[]');const next=saved?list.filter(x=>x.slug!==item.slug):[...list,item];localStorage.setItem(KEY,JSON.stringify(next));setSaved(!saved)}return <button className="button light" onClick={toggle} aria-pressed={saved}>{saved?'Saved ✓':'Save +'}</button>}
+export function SavedList(){const[items,setItems]=useState<Saved[]>([]);useEffect(()=>{try{setItems(JSON.parse(localStorage.getItem(KEY)||'[]'))}catch{}},[]);return <div className="grid">{items.map(x=><article className="artifact" key={x.slug}><a href={`/artifacts/${x.slug}`}>{x.image&&<img src={x.image} alt={x.name}/>}<div className="meta">{x.category} · {x.period}</div><h3>{x.name}</h3></a><button className="button light" onClick={()=>{const n=items.filter(y=>y.slug!==x.slug);setItems(n);localStorage.setItem(KEY,JSON.stringify(n))}}>Remove</button></article>)}</div>}

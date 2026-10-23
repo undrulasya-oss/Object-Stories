@@ -1,0 +1,15 @@
+'use client';
+import {FormEvent,useEffect,useRef,useState} from 'react';
+type MetItem={id:number;title:string;artist:string;date:string;culture:string;medium:string;department:string;image:string;url:string;credit:string;highlight:boolean};
+type Result={query:string;total:number;items:MetItem[];error?:string};
+export function MetCollection(){const [query,setQuery]=useState('mask'),[result,setResult]=useState<Result|null>(null),[loading,setLoading]=useState(true),[error,setError]=useState(''); const started=useRef(false);
+ async function search(q:string){setLoading(true);setError('');try{const response=await fetch('/api/met?q='+encodeURIComponent(q),{cache:'no-store'});const data=await response.json() as Result;if(!response.ok)throw new Error(data.error||'The museum API is unavailable.');setResult(data)}catch(e){setError(e instanceof Error?e.message:'Could not reach the museum API.')}finally{setLoading(false)}}
+ useEffect(()=>{if(!started.current){started.current=true;void search('mask')}},[]);
+ function submit(e:FormEvent){e.preventDefault();void search(query.trim()||'object')}
+ return <section className="met-gallery"><div className="met-intro"><div><div className="eyebrow">Live from The Met · Open Access</div><h2>More to wander through.</h2><p>Search real collection objects and photographs from The Metropolitan Museum of Art.</p></div><form className="met-search" onSubmit={submit}><label htmlFor="met-query">Search another subject</label><div><input id="met-query" value={query} onChange={e=>setQuery(e.target.value)} placeholder="Try ceramics, astronomy, portraits…"/><button className="button">Search ↗</button></div></form></div>
+ {loading?<div className="met-loading"><span className="loader-dot"></span><span>Finding objects in the collection…</span></div>:error?<div className="met-error">{error}<button className="button light" onClick={()=>void search(query)}>Try again</button></div>:<><div className="met-result-head"><span>{result?.total.toLocaleString()} matching records</span><span>Showing public-domain images · {result?.query}</span></div><div className="met-grid">{result?.items.map((item,i)=><article className="met-card" key={item.id}><a href={item.url} target="_blank" rel="noreferrer" className="met-card-image"><img src={item.image} alt={item.title} loading={i>3?'lazy':'eager'}/><span className="met-number">MET Nº {item.id}</span></a><div className="met-card-body"><div className="met-card-kicker">{item.culture||item.department}{item.date?' · '+item.date:''}</div><h3>{item.title}</h3><p>{item.medium||item.artist||item.objectName}</p><a className="met-link" href={item.url} target="_blank" rel="noreferrer">View the museum record <span>↗</span></a></div></article>)}</div>{!result?.items.length&&<p>No public-domain photographs came back for that search. Try another subject.</p>}</>}
+ <div className="met-credit">Records and public-domain images served live by <a href="https://www.metmuseum.org/about-the-met/policies-and-documents/open-access" target="_blank" rel="noreferrer">The Met Open Access ↗</a></div>
+ </section>
+}
+
+
